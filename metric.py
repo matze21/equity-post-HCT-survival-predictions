@@ -24,7 +24,7 @@ class ParticipantVisibleError(Exception):
     pass
 
 
-def score(solution: pd.DataFrame, submission: pd.DataFrame, row_id_column_name : str) -> float:
+def score(solution: pd.DataFrame, submission: pd.DataFrame, row_id_column_name : str):
     """
     >>> import pandas as pd
     >>> row_id_column_name = "id"
@@ -49,6 +49,7 @@ def score(solution: pd.DataFrame, submission: pd.DataFrame, row_id_column_name :
     merged_df.reset_index(inplace=True)
     merged_df_race_dict = dict(merged_df.groupby(['race_group']).groups)
     metric_list = []
+    m = dict()
     for race in merged_df_race_dict.keys():
         # Retrieving values from y_test based on index
         indices = sorted(merged_df_race_dict[race])
@@ -59,4 +60,6 @@ def score(solution: pd.DataFrame, submission: pd.DataFrame, row_id_column_name :
                         -merged_df_race[prediction_label],
                         merged_df_race[event_label])
         metric_list.append(c_index_race)
-    return float(np.mean(metric_list)-np.sqrt(np.var(metric_list)))
+        m[race] = c_index_race
+    print(m)
+    return float(np.mean(metric_list)-np.sqrt(np.var(metric_list))), metric_list
